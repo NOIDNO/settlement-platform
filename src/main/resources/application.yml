@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/settlement
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  mybatis:
+    mapper-locations: classpath:mapper/**/*.xml
+    type-aliases-package: com.xxx.settlement
+    configuration:
+      map-underscore-to-camel-case: true
+
+server:
+  port: 8080
+
+jwt:
+  secret: settlement-platform-secret-key-2024-very-long-string
+  expiration: 86400000
+  access-expiration: 1800000   # 30분
+  refresh-expiration: 604800000 # 7일
+
