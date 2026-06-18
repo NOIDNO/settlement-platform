@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ohy.settlement.auth.mapper.RefreshTokenMapper">
+    <insert id="upsertRefreshToken" parameterType="com.ohy.settlement.auth.domain.RefreshToken">
+        INSERT INTO refresh_token (email, token, expired_at, created_at)
+        VALUES (#{email}, #{token}, #{expiredAt}, NOW())
+        ON CONFLICT (email)
+        DO UPDATE SET
+            token = #{token},
+            expired_at = #{expiredAt},
+            created_at = NOW()
+    </insert>
+
+    <select id="findByEmail" resultType="com.ohy.settlement.auth.domain.RefreshToken">
+        SELECT token_id, email, token, expired_at, created_at
+        FROM refresh_token
+        WHERE email = #{email}
+    </select>
+
+    <delete id="deleteByEmail">
+        DELETE FROM refresh_token WHERE email = #{email}
+    </delete>
+
+</mapper>
