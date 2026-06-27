@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xxx.settlement.channel.mapper.ChannelMapper">
+
+    <!-- 채널 등록 -->
+    <insert id="insertChannel" parameterType="com.xxx.settlement.channel.domain.Channel"
+            useGeneratedKeys="true" keyProperty="channelId">
+        INSERT INTO channel (seller_id, channel_name, channel_type, api_key, status, created_at)
+        VALUES (#{sellerId}, #{channelName}, #{channelType}, #{apiKey}, #{status}, NOW())
+    </insert>
+
+    <!-- 판매자 ID로 채널 목록 조회 -->
+    <select id="findBySellerId" resultType="com.xxx.settlement.channel.domain.Channel">
+        SELECT channel_id, seller_id, channel_name, channel_type, api_key, status, created_at
+        FROM channel
+        WHERE seller_id = #{sellerId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 채널 단건 조회 -->
+    <select id="findByChannelId" resultType="com.xxx.settlement.channel.domain.Channel">
+        SELECT channel_id, seller_id, channel_name, channel_type, api_key, status, created_at
+        FROM channel
+        WHERE channel_id = #{channelId}
+    </select>
+
+    <!-- api_key로 채널 조회 (해당 api_key 가진 채널 확인) -->
+    <select id="findByApiKey" resultType="com.xxx.settlement.channel.domain.Channel">
+        SELECT channel_id, seller_id, channel_name, channel_type, api_key, status, created_at
+        FROM channel
+        WHERE api_key = #{apiKey}
+          AND status = 'ACTIVE'
+    </select>
+
+    <!-- 채널 상태 변경 -->
+    <update id="updateStatus">
+        UPDATE channel
+        SET status = #{status}
+        WHERE channel_id = #{channelId}
+    </update>
+
+    <!-- 채널 삭제 -->
+    <delete id="deleteChannel">
+        DELETE FROM channel WHERE channel_id = #{channelId}
+    </delete>
+
+</mapper>
