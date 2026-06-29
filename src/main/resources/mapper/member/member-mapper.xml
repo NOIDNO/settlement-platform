@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.xxx.settlement.member.mapper.MemberMapper">
+<mapper namespace="com.ohy.settlement_platform.member.mapper.MemberMapper">
 
-    <insert id="insertMember" parameterType="com.xxx.settlement.member.domain.Member">
+    <insert id="insertMember" parameterType="com.ohy.settlement_platform.member.domain.Member">
         INSERT INTO member (email, password, name, role, created_at)
         VALUES (#{email}, #{password}, #{name}, #{role}, NOW())
     </insert>
 
-    <select id="findByEmail" resultType="com.xxx.settlement.member.domain.Member">
+    <select id="findByEmail" resultType="com.ohy.settlement_platform.member.domain.Member">
         SELECT member_id, email, password, name, role, created_at
         FROM member
         WHERE email = #{email}

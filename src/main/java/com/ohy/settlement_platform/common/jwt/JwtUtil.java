@@ -1,7 +1,5 @@
 package com.ohy.settlement_platform.common.jwt;
 
-import com.ohy.settlement_platform.common.exception.GlobalExceptionHandler;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -24,7 +22,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
  */
 @Component
 public class JwtUtil {
-    private final GlobalExceptionHandler globalExceptionHandler;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -38,11 +35,6 @@ public class JwtUtil {
     @Value("${jwt. refresh-expiration}")
     private long refreshExpiration;
 
-
-    JwtUtil(GlobalExceptionHandler globalExceptionHandler) {
-        this.globalExceptionHandler = globalExceptionHandler;
-    }
-    
   
     /**
      * Access Token 생성

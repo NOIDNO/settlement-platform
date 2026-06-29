@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ohy.settlement_platform.transaction.mapper.TransactionMapper">
+
+    <insert id="insertTransaction" parameterType="com.ohy.settlement_platform.transaction.domain.Transaction"
+            useGeneratedKeys="true" keyProperty="transactionId">
+        INSERT INTO transaction (channel_id, external_tx_id, amount, status, transacted_at, created_at)
+        VALUES (#{channelId}, #{externalTxId}, #{amount}, #{status}, #{transactedAt}, NOW())
+    </insert>
+
+    <!--
+        중복 체크용 쿼리
+        같은 채널에서 같은 external_tx_id가 이미 있으면 true
+        이걸로 같은 거래가 두 번 들어오는 걸 막아요 (멱등성 처리)
+    -->
+    <select id="existsByChannelIdAndExternalTxId" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM transaction
+            WHERE channel_id = #{channelId}
+              AND external_tx_id = #{externalTxId}
+        )
+    </select>
+
+    <!--
+        판매자의 모든 거래 조회
+        transaction은 channel_id만 갖고 있어서
+        channel 테이블 거쳐서 seller_id로 필터링해요 (JOIN)
+    -->
+    <select id="findBySellerId" resultType="com.ohy.settlement_platform.transaction.domain.Transaction">
+        SELECT t.transaction_id, t.channel_id, t.external_tx_id, t.amount, t.status, t.transacted_at, t.created_at
+        FROM transaction t
+        JOIN channel c ON t.channel_id = c.channel_id
+        WHERE c.seller_id = #{sellerId}
+        ORDER BY t.transacted_at DESC
+    </select>
+
+    <select id="findByChannelId" resultType="com.ohy.settlement_platform.transaction.domain.Transaction">
+        SELECT transaction_id, channel_id, external_tx_id, amount, status, transacted_at, created_at
+        FROM transaction
+        WHERE channel_id = #{channelId}
+        ORDER BY transacted_at DESC
+    </select>
+
+    <!--
+        정산 배치용: 특정 판매자의 특정 날짜 거래만 조회
+        DATE(transacted_at) → timestamp에서 날짜 부분만 추출해서 비교
+    -->
+    <select id="findBySellerIdAndDate" resultType="com.ohy.settlement_platform.transaction.domain.Transaction">
+        SELECT t.transaction_id, t.channel_id, t.external_tx_id, t.amount, t.status, t.transacted_at, t.created_at
+        FROM transaction t
+        JOIN channel c ON t.channel_id = c.channel_id
+        WHERE c.seller_id = #{sellerId}
+          AND DATE(t.transacted_at) = #{date}
+          AND t.status = 'APPROVED'
+    </select>
+
+</mapper>

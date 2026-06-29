@@ -2,7 +2,6 @@ package com.ohy.settlement_platform.channel.domain;
 
 import java.time.LocalDateTime;
 
-import com.ohy.settlement_platform.channel.dto.ChannelResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
